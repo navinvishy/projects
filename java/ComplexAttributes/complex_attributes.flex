@@ -44,7 +44,8 @@ whitespace = [ \t]+
 <YYINITIAL> {Integer} {return symbol(sym.INTEGERVAL);} 
 <YYINITIAL> {String} {return symbol(sym.STRINGVAL);} 
 <YYINITIAL> {Stringvalue} {return symbol(sym.ATTRIBUTE);} 
-<YYINITIAL> {whitespace} {} 
+<YYINITIAL> {whitespace} {}
+<YYINITIAL> {LineTerminator} {} 
 
 
 
