@@ -7,6 +7,16 @@
 %line
 %column
 
+%{
+  private java_cup.runtime.Symbol symbol(int type) {
+    return new java_cup.runtime.Symbol(type, yyline, yycolumn);
+  }
+  private java_cup.runtime.Symbol symbol(int type, Object value) {
+    return new java_cup.runtime.Symbol(type, yyline, yycolumn, value);
+  }
+%}
+
+LineTerminator = \r|\n|\r\n
 Lparen = "("
 Rparen = ")"
 Lbrace = "{"
@@ -20,9 +30,9 @@ whitespace = [ \t]+
 
 
 %%
-<YYINITIAL> "schema" {return symbol(sym.SCHEMA);} 
-<YYINITIAL> "instances" {return symbol(sym.INSTANCES);} 
-<YYINITIAL> "end" {return symbol(sym.END);} 
+<YYINITIAL> "schema"{LineTerminator} {return symbol(sym.SCHEMA);} 
+<YYINITIAL> "instances" {LineTerminator} {return symbol(sym.INSTANCES);} 
+<YYINITIAL> "end" {LineTerminator} {return symbol(sym.END);} 
 <YYINITIAL> "integer" {return symbol(sym.INTEGER);} 
 <YYINITIAL> "string" {return symbol(sym.STRING);} 
 <YYINITIAL> {Lparen} {return symbol(sym.LPAREN);} 

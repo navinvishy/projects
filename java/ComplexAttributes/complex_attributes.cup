@@ -5,7 +5,9 @@ terminal            SCHEMA, INSTANCES, END, ATTRIBUTE, LPAREN, RPAREN, COMMA, LB
 non terminal            attribute, complex_attribute, composite_attribute, simple_attribute, multivalued_attribute, attribute_list;
 non terminal            simple_attribute_instance, complex_attribute_instance, complex_attribute_instances, multivalued_attribute_instance, composite_attribute_instance;
 non terminal            attribute_list_instance, attribute_instance, mv_simple_attribute_instance, mv_composite_attribute_instance;
-non terminal            manyvalued_attribute_instance;
+non terminal            manyvalued_attribute_instance, complex_attribute_program;
+
+/* The grammar */
 
 complex_attribute_program ::=
   SCHEMA complex_attribute INSTANCES complex_attribute_instances END;
