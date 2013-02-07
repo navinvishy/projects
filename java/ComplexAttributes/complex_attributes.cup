@@ -1,0 +1,86 @@
+/* Terminals (tokens returned by the scanner). */
+terminal            SCHEMA, INSTANCES, END, ATTRIBUTE, LPAREN, RPAREN, COMMA, LBRACE, RBRACE, COLON, INTEGER, STRING, INTEGERVAL, STRINGVAL;
+
+/* Non terminals */
+non terminal            attribute, complex_attribute, composite_attribute, simple_attribute, multivalued_attribute, attribute_list;
+non terminal            simple_attribute_instance, complex_attribute_instance, complex_attribute_instances, multivalued_attribute_instance, composite_attribute_instance;
+non terminal            attribute_list_instance, attribute_instance, mv_simple_attribute_instance, mv_composite_attribute_instance;
+non terminal            manyvalued_attribute_instance;
+
+complex_attribute_program ::=
+  SCHEMA complex_attribute INSTANCES complex_attribute_instances END;
+
+complex_attribute ::=
+  composite_attribute
+  |
+  multivalued_attribute;
+
+composite_attribute ::=
+  ATTRIBUTE LPAREN attribute_list RPAREN;
+
+attribute_list ::=
+  attribute
+  | 
+  attribute COMMA attribute_list;
+
+attribute ::=
+  simple_attribute
+  |
+  complex_attribute;
+
+simple_attribute ::=
+  ATTRIBUTE COLON INTEGER
+  |
+  ATTRIBUTE COLON STRING;
+
+multivalued_attribute ::=
+  LBRACE simple_attribute RBRACE 
+  |
+  LBRACE composite_attribute RBRACE;
+
+// instance rules
+complex_attribute_instances ::= 
+  complex_attribute_instance
+  | 
+  complex_attribute_instance complex_attribute_instances;
+
+complex_attribute_instance ::=
+  composite_attribute_instance
+  |
+  multivalued_attribute_instance;
+
+composite_attribute_instance ::=
+  ATTRIBUTE LPAREN attribute_list_instance RPAREN;
+
+attribute_list_instance ::=
+  attribute_instance
+  | 
+  attribute_instance COMMA attribute_list_instance;
+
+attribute_instance ::=
+  simple_attribute_instance
+  |
+  complex_attribute_instance;
+
+simple_attribute_instance ::=
+  INTEGERVAL
+  | 
+  STRINGVAL;
+
+multivalued_attribute_instance ::=
+  LBRACE manyvalued_attribute_instance RBRACE;
+
+manyvalued_attribute_instance ::=
+  mv_simple_attribute_instance
+  |
+  mv_composite_attribute_instance;
+
+mv_simple_attribute_instance ::=
+  simple_attribute_instance
+  |
+  simple_attribute_instance COMMA mv_simple_attribute_instance;
+
+mv_composite_attribute_instance ::=
+  composite_attribute_instance
+  | 
+  composite_attribute_instance COMMA mv_composite_attribute_instance;
