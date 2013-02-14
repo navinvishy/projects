@@ -1,0 +1,147 @@
+/* Terminals (tokens returned by the scanner). */
+terminal String SCHEMA; 
+terminal String INSTANCES; 
+terminal String END; 
+terminal String ATTRIBUTE; 
+terminal String LPAREN; 
+terminal String RPAREN; 
+terminal String COMMA; 
+terminal String LBRACE; 
+terminal String RBRACE; 
+terminal String COLON; 
+terminal String INTEGER; 
+terminal String STRING; 
+terminal Integer INTEGERVAL; 
+terminal String STRINGVAL;
+
+/* Non terminals */
+non terminal Attribute attribute;
+non terminal ComplexAttribute complex_attribute; 
+non terminal CompositeAttribute composite_attribute; 
+non terminal SimpleAttribute simple_attribute; 
+non terminal MultivaluedAttribute multivalued_attribute; 
+non terminal AttributeList attribute_list;
+non terminal SimpleAttributeInstance simple_attribute_instance; 
+non terminal ComplexAttributeInstance complex_attribute_instance; 
+non terminal ComplexAttributeInstances complex_attribute_instances; 
+non terminal MultiValuedAttributeInstance multivalued_attribute_instance; 
+non terminal CompositeAttributeInstance composite_attribute_instance;
+non terminal AttributeListInstance attribute_list_instance; 
+non terminal AttributeInstance attribute_instance; 
+non terminal MVSimpleAttributeInstance mv_simple_attribute_instance; 
+non terminal MVCompositeAttributeInstance mv_composite_attribute_instance;
+non terminal ManyValuedAttributeInstance manyvalued_attribute_instance; 
+non terminal ComplexAttributeProgram complex_attribute_program;
+
+/* The grammar */
+
+complex_attribute_program ::=
+  SCHEMA:s complex_attribute:a INSTANCES:i complex_attribute_instances:ci END:e
+  {: System.out.println("Number of CA instances in input file is: " + ci.instances.size() + "\n"); 
+     System.out.println("CA Schema: " + a.toString());
+     System.out.println("Instances in file: \n" + ci.toString());
+     RESULT = new ComplexAttributeProgram(s,a,i,ci,e); :};
+
+complex_attribute ::=
+  composite_attribute:a
+  {: RESULT = a; :}
+  |
+  multivalued_attribute:a
+  {: RESULT = a; :};
+
+composite_attribute ::=
+  ATTRIBUTE:a LPAREN attribute_list:l RPAREN
+  {: RESULT = new CompositeAttribute(a, l); :};
+
+attribute_list ::=
+  attribute:a
+  {: RESULT = new AttributeList(a); :}
+  | 
+  attribute:a COMMA attribute_list:l
+  {: l.getAttributeList().add(0,a); RESULT = l; :};
+
+attribute ::=
+  simple_attribute:a
+  {: RESULT = a; :}
+  |
+  complex_attribute:a
+  {: RESULT = a; :};
+
+simple_attribute ::=
+  ATTRIBUTE:a COLON INTEGER:i
+  {: RESULT = new SimpleAttribute(a, i); :}
+  |
+  ATTRIBUTE:a COLON STRING:s
+  {: RESULT = new SimpleAttribute(a, s); :};
+
+multivalued_attribute ::=
+  LBRACE simple_attribute:a RBRACE 
+  {: RESULT = new MultivaluedAttribute(a); :}
+  |
+  LBRACE composite_attribute:a RBRACE
+  {: RESULT = new MultivaluedAttribute(a); :};
+
+// instance rules
+complex_attribute_instances ::= 
+  complex_attribute_instance:a
+  {: RESULT = new ComplexAttributeInstances(a); :}
+  | 
+  complex_attribute_instance:a complex_attribute_instances:l
+  {: l.instances.add(0,a); RESULT = l; :};
+
+complex_attribute_instance ::=
+  composite_attribute_instance:a
+  {: RESULT = a; :}
+  |
+  multivalued_attribute_instance:a
+  {: RESULT = a; :};
+
+composite_attribute_instance ::=
+  ATTRIBUTE:a LPAREN attribute_list_instance:l RPAREN
+  {: RESULT = new CompositeAttributeInstance(a,l); :};
+
+attribute_list_instance ::=
+  attribute_instance:a
+  {: RESULT = new AttributeListInstance(a); :}
+  | 
+  attribute_instance:a COMMA attribute_list_instance:l
+  {: l.getAttributeInstances().add(0,a); RESULT = l; :};
+
+attribute_instance ::=
+  simple_attribute_instance:a
+  {: RESULT = a; :}
+  |
+  complex_attribute_instance:a
+  {: RESULT = a; :};
+
+simple_attribute_instance ::=
+  INTEGERVAL:v
+  {: RESULT = new SimpleAttributeInstance(v); :}
+  | 
+  STRINGVAL:v
+  {: RESULT = new SimpleAttributeInstance(v); :};
+
+multivalued_attribute_instance ::=
+  LBRACE manyvalued_attribute_instance:a RBRACE
+  {: RESULT = new MultiValuedAttributeInstance(a); :};
+
+manyvalued_attribute_instance ::=
+  mv_simple_attribute_instance:a
+  {: RESULT = a; :}
+  |
+  mv_composite_attribute_instance:a
+  {: RESULT = a; :};
+
+mv_simple_attribute_instance ::=
+  simple_attribute_instance:a
+  {: RESULT = new MVSimpleAttributeInstance(a); :}
+  |
+  simple_attribute_instance:a COMMA mv_simple_attribute_instance:l
+  {: l.instances.add(0,a); RESULT = l; :};
+
+mv_composite_attribute_instance ::=
+  composite_attribute_instance:a
+  {: RESULT = new MVCompositeAttributeInstance(a); :}
+  | 
+  composite_attribute_instance:a COMMA mv_composite_attribute_instance:l
+  {: l.instances.add(0,a); RESULT = l; :};

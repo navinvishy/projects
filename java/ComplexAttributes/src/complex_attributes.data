@@ -1,0 +1,8 @@
+schema
+a(b(c:integer, d:string),
+  e(f(g:integer,h:string),j:integer,k:integer)
+)
+instances
+a(b(5,'Jones'),e(f(10,'Smith'),11,12)) 
+a(b(6,'Blake'),e(f(11,'Donald'),21,22))
+end
