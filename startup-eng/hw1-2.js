@@ -4,8 +4,13 @@ var outfile = "primes.txt";
 limit = 100;
 primes = [];
 input = [];
-for(var i=0;i<100;i++) input[i]=i+1;
-primes = map(input,isPrime);
+var done = false;
+var i = 2;
+while(!done){
+	if(isPrime(i)) primes.push(i);
+	i++;
+	if(primes.length >= 100) done = true;	
+}
 function map(array,action){
 	result = [];
 	for(var i=0;i<array.length;i++){
