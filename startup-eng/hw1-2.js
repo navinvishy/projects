@@ -14,6 +14,7 @@ function map(array,action){
 	return result;
 }
 function isPrime(n){
+	if(n===1) return false;
 	var isNotPrime = false;
 	for(var j=2;j<=Math.floor(Math.sqrt(n));j++){
 		isNotPrime = (n%j == 0);	
